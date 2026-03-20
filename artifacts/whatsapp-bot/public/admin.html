@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supreme MD — Advanced Console</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Login Screen -->
+    <div id="login-screen">
+        <div class="login-card">
+            <div class="login-logo">
+                <div class="logo-icon">⚡</div>
+                <h2 style="margin-top: 1.5rem; font-size: 1.75rem;">Supreme Console</h2>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Security authorization required</p>
+            </div>
+            <div style="margin-bottom: 2rem;">
+                <input type="text" id="username" class="input-field" placeholder="Admin Username" style="margin-bottom: 1rem; width: 100%;">
+                <input type="password" id="password" class="input-field" placeholder="Access Key" style="width: 100%;">
+            </div>
+            <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="handleLogin()">Authorize System</button>
+            <div id="login-error" style="color: var(--danger); font-size: 0.85rem; margin-top: 1.5rem; height: 1.2rem;"></div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="app-container" class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">🚀</div>
+                <div class="logo-text">Supreme<span>MD</span></div>
+            </div>
+            
+            <nav class="nav-links">
+                <div class="nav-item active" data-id="overview" onclick="showSection('overview')">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Overview</span>
+                </div>
+                <div class="nav-item" data-id="connection" onclick="showSection('connection')">
+                    <i class="fas fa-link"></i>
+                    <span>Connection</span>
+                </div>
+                <div class="nav-item" data-id="settings" onclick="showSection('settings')">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </div>
+                <div class="nav-item" data-id="users" onclick="showSection('users')">
+                    <i class="fas fa-users-cog"></i>
+                    <span>User Management</span>
+                </div>
+                <div class="nav-item" data-id="terminal" onclick="showSection('terminal')">
+                    <i class="fas fa-terminal"></i>
+                    <span>Terminal</span>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="connection-status" style="margin-bottom: 1rem;">
+                    <div id="sidebar-dot" class="status-dot"></div>
+                    <span id="sidebar-status-text">Synchronizing...</span>
+                </div>
+                <button class="nav-item" style="width: 100%; border: none; background: transparent;" onclick="handleLogout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Terminate Session</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <div class="header-title">
+                    <h1 id="current-page-title">General Overview</h1>
+                    <p id="page-subtitle">Real-time system diagnostics and control</p>
+                </div>
+                <button class="btn-refresh" onclick="refreshData()">
+                    <i class="fas fa-sync-alt"></i>
+                    Reload System
+                </button>
+            </header>
+
+            <!-- Section: Overview -->
+            <section id="section-overview" class="section active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Link Status</div>
+                        <div class="stat-value" id="stat-conn">OFFLINE</div>
+                        <div class="stat-sub">Signal stream health</div>
+                        <div class="stat-icon"><i class="fas fa-signal"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Uptime</div>
+                        <div class="stat-value" id="stat-uptime">00:00:00</div>
+                        <div class="stat-sub">Continuous operation</div>
+                        <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Process Memory</div>
+                        <div class="stat-value" id="stat-ram">0 MB</div>
+                        <div class="stat-sub">Shared buffer load</div>
+                        <div class="stat-icon"><i class="fas fa-memory"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Authorized Mods</div>
+                        <div class="stat-value" id="ov-mods">0</div>
+                        <div class="stat-sub">Verified administrators</div>
+                        <div class="stat-icon"><i class="fas fa-user-shield"></i></div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col" style="flex: 2;">
+                        <div class="stat-card" style="height: 100%;">
+                            <div class="stat-label">System Performance</div>
+                            <div style="margin-top: 2rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span style="font-size: 0.9rem; font-weight: 600;">CPU Utilization</span>
+                                    <span style="font-family: var(--font-mono); color: var(--accent);" id="ov-cpu">-</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="font-size: 0.9rem; font-weight: 600;">System RAM</span>
+                                    <span style="font-family: var(--font-mono); color: var(--primary-alt);" id="ov-mem">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="stat-card" style="height: 100%;">
+                            <div class="stat-label">Network Throughput</div>
+                            <div style="margin-top: 1.5rem;">
+                                <div style="margin-bottom: 1.5rem;">
+                                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.4rem;">
+                                        <span>Incoming</span>
+                                        <span id="dl-val" style="font-family: var(--font-mono); color: var(--accent);">0 KB/s</span>
+                                    </div>
+                                    <div style="height: 6px; background: rgba(0,0,0,0.3); border-radius: 3px; overflow: hidden;">
+                                        <div id="dl-bar" style="width: 0%; height: 100%; background: var(--accent); border-radius: 3px; transition: 0.5s;"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.4rem;">
+                                        <span>Outgoing</span>
+                                        <span id="ul-val" style="font-family: var(--font-mono); color: var(--primary-alt);">0 KB/s</span>
+                                    </div>
+                                    <div style="height: 6px; background: rgba(0,0,0,0.3); border-radius: 3px; overflow: hidden;">
+                                        <div id="ul-bar" style="width: 0%; height: 100%; background: var(--primary-alt); border-radius: 3px; transition: 0.5s;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section: Connection -->
+            <section id="section-connection" class="section">
+                <div class="stat-card" style="text-align: center; max-width: 600px; margin: 0 auto;">
+                    <div class="stat-label">Satellite Synchronization</div>
+                    <div class="qr-container">
+                        <canvas id="qr-canvas"></canvas>
+                    </div>
+                    <p id="qr-message" style="color: var(--text-dim); margin-bottom: 1.5rem;">Awaiting signal stream...</p>
+                    <div style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: var(--radius-md); text-align: left;">
+                        <h4 style="font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--primary-alt);">Connection Instructions:</h4>
+                        <ol style="font-size: 0.85rem; color: var(--text-muted); padding-left: 1.25rem;">
+                            <li>Open WhatsApp on your phone</li>
+                            <li>Tap Menu or Settings and select Linked Devices</li>
+                            <li>Tap Link a Device and point your camera at this screen</li>
+                        </ol>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section: Settings -->
+            <section id="section-settings" class="section">
+                <div class="stat-card" style="margin-bottom: 1.5rem;">
+                    <div class="stat-label">Global Directives</div>
+                    <div id="settings-list" style="margin-top: 1.5rem;">
+                        <!-- Settings items populated by JS -->
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">System Critical Actions</div>
+                    <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                        <button class="btn btn-accent" style="flex: 1;" onclick="sysAction('api/update-ytdlp', 'Upgrade video decryption core?')">
+                            <i class="fas fa-bolt"></i> Update Core Engine
+                        </button>
+                        <button class="btn btn-primary" style="flex: 1;" onclick="sysAction('api/restart', 'Initialize system recycling?')">
+                            <i class="fas fa-redo"></i> System Reboot
+                        </button>
+                        <button class="btn btn-icon" style="flex: 0.2; height: 50px; border-radius: 12px; font-size: 1.2rem;" onclick="sysAction('api/logout', 'Flush all session buffers?')">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section: User Management -->
+            <section id="section-users" class="section">
+                <div class="row">
+                    <div class="col">
+                        <div class="stat-card">
+                            <div class="stat-label">Administrative Provisioning</div>
+                            <div class="input-group" style="margin-top: 1.5rem;">
+                                <input type="text" id="mod-number" class="input-field" placeholder="WhatsApp Number (e.g. 94...)">
+                                <button class="btn btn-accent" onclick="addMod()">Add Mod</button>
+                            </div>
+                            <div id="mod-list" class="list-container"></div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="stat-card">
+                            <div class="stat-label">Containment Layer (Blacklist)</div>
+                            <div class="input-group" style="margin-top: 1.5rem;">
+                                <input type="text" id="ban-number" class="input-field" placeholder="WhatsApp Number">
+                                <button class="btn btn-primary" style="background: var(--danger);" onclick="addBan()">Add Ban</button>
+                            </div>
+                            <div id="ban-list" class="list-container"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section: Terminal -->
+            <section id="section-terminal" class="section">
+                <div class="terminal" id="terminal-box"></div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

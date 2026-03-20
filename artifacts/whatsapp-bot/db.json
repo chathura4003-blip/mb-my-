@@ -1,0 +1,11 @@
+{
+  "users": {},
+  "groups": {},
+  "settings": {
+    "public": true,
+    "welcome": false,
+    "nsfw": true
+  },
+  "mods": {},
+  "bans": {}
+}

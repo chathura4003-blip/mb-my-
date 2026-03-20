@@ -1,0 +1,11 @@
+**/node_modules
+node_modules
+**/downloads
+**/session
+.git
+.railway
+dist
+*.exe
+yt-dlp
+yt-dlp.exe
+*.log
