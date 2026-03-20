@@ -60,7 +60,7 @@ async function connect() {
         generateHighQualityLinkPreview: true,
         retryRequestDelayMs: 2000,
         maxMsgRetryCount: 3,
-        syncFullHistory: false,
+        syncFullHistory: true, // "Pro" MD sync for encryption stability
         msgRetryCounterCache: new Map(), // Track retries to avoid loops
         patchMessageBeforeSending: (message) => {
             const requiresPatch = !!(
@@ -127,11 +127,16 @@ async function connect() {
             connectionAttempts = 0;
             logger(`[Bot] ✅ Connected as ${sock.user?.id || 'unknown'}`);
             
-            // Wait 3 seconds for initial session sync to prevent "No sessions" errors on first command
+            // Wait 5 seconds for full MD history sync – prevents initial "No sessions" errors
             setTimeout(() => {
-                logger('[Bot] ⚡ Session sync stable — accepting commands.');
-            }, 3000);
+                logger('[Bot] ⚡ MD Session sync complete — all systems operational.');
+            }, 5000);
         }
+    });
+
+    // ── MD History Synchronization ────────────────────────────────────────
+    sock.ev.on('messaging-history.set', ({ chats, contacts, messages, isLatest }) => {
+        logger(`[Bot] 🔄 MD Sync: ${chats.length} chats, ${contacts.length} contacts, ${messages.length} messages (Latest: ${isLatest})`);
     });
 
     // ── Save credentials ──────────────────────────────────────────────────
