@@ -13,6 +13,7 @@ const {
     default: makeWASocket,
     DisconnectReason,
     fetchLatestBaileysVersion,
+    makeCacheableSignalKeyStore,
 } = require('@whiskeysockets/baileys');
 const qrcode = require('qrcode-terminal');
 const pino = require('pino');
@@ -52,14 +53,36 @@ async function connect() {
         logger: pino({ level: 'silent' }),
         auth: {
             creds: authState.creds,
-            keys: authState.keys,
+            keys: makeCacheableSignalKeyStore(authState.keys, pino({ level: 'silent' })),
         },
         browser: ['Supreme MD Bot', 'Chrome', '131.0'],
         markOnlineOnConnect: true,
         generateHighQualityLinkPreview: true,
         retryRequestDelayMs: 2000,
         maxMsgRetryCount: 3,
-        syncFullHistory: false, // Less data to sync = faster 'No sessions' fix
+        syncFullHistory: false,
+        msgRetryCounterCache: new Map(), // Track retries to avoid loops
+        patchMessageBeforeSending: (message) => {
+            const requiresPatch = !!(
+                message.buttonsMessage ||
+                message.templateMessage ||
+                message.listMessage
+            );
+            if (requiresPatch) {
+                message = {
+                    viewOnceMessage: {
+                        message: {
+                            messageContextInfo: {
+                                deviceListMetadata: {},
+                                deviceListMetadataVersion: 2
+                            },
+                            ...message
+                        }
+                    }
+                };
+            }
+            return message;
+        },
     });
 
     // ── Connection event ──────────────────────────────────────────────────

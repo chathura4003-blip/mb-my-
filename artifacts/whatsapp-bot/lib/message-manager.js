@@ -33,7 +33,10 @@ class MessageManager {
             return sent;
         } catch (err) {
             if (err.message?.includes('No sessions') && attempt <= 3) {
-                logger(`[MsgMgr] "No sessions" error sending temp to ${jid}. Retrying in 2s (Attempt ${attempt}/3)...`);
+                logger(`[MsgMgr] "No sessions" for ${jid} — forcing metadata sync (Attempt ${attempt}/3)...`);
+                if (jid.endsWith('@g.us')) {
+                    try { await sock.groupMetadata(jid); } catch {}
+                }
                 await new Promise(r => setTimeout(r, 2000));
                 return this.sendTemp(sock, jid, text, ms, attempt + 1);
             }
@@ -52,7 +55,10 @@ class MessageManager {
             return await sock.sendMessage(jid, content);
         } catch (err) {
             if (err.message?.includes('No sessions') && attempt <= 3) {
-                logger(`[MsgMgr] "No sessions" error sending to ${jid}. Retrying in 2s (Attempt ${attempt}/3)...`);
+                logger(`[MsgMgr] "No sessions" for ${jid} — forcing metadata sync (Attempt ${attempt}/3)...`);
+                if (jid.endsWith('@g.us')) {
+                    try { await sock.groupMetadata(jid); } catch {}
+                }
                 await new Promise(r => setTimeout(r, 2000));
                 return this.send(sock, jid, content, attempt + 1);
             }
