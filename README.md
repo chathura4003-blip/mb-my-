@@ -15,13 +15,10 @@ A powerful, high-performance WhatsApp bot built with Baileys. Optimized for vide
 
 1. Click the **Deploy on Railway** button above.
 2. Connect your GitHub repository.
-3. **Critical Step (Persistence):**
-   - After the first deploy, go to the **Settings** tab of your service.
-   - Click **Volumes** -> **Add Volume**.
-   - Mount Path: `/app/artifacts/whatsapp-bot/session`
-4. **Environment Variables:**
-   - `OWNER_NUMBER`: Your WhatsApp number (e.g., `94742514900`).
-   - `PREFIX`: Command prefix (default: `.`).
+3. Railway will automatically:
+   - Prompt you for your `OWNER_NUMBER`.
+   - Set up the **Persistent Volume** for your session.
+   - Deploy the bot!
 
 ## 📱 Connecting the Bot
 
